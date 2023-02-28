@@ -9,15 +9,19 @@ exports.create = async (user_id, ip, user_agent) => {
         await Session.updateOne({ _id: id }, { expired: true });
     }
 
-    const session = await (new Session({
+    let session = await (new Session({
         user_id, ip, user_agent
     })).save();
+
+    session = session.toObject();
+    session.id = session._id;
+    delete session["_id"]; delete session["__v"]; delete session["user_agent"]; delete session["ip"]
 
     return session;
 };
 
 exports.verifySession = async (id, ip, user_agent) => {
-    const session = await Session.findById(id);
+    let session = await Session.findById(id);
     
     if (session) {
         if (session.ip === ip || session.user_agent === user_agent) {

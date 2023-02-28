@@ -19,8 +19,8 @@ exports.login = catchAsync(async (req, res) => {
 });
 
 exports.register = catchAsync(async (req, res) => {
-    const { username, password, email } = req.body;
-    const { user } = await authService.register(email, password, username);
+    const { username, password, type } = req.body;
+    const { user } = await authService.register(username, password, type);
     const ip = (
         req.headers["x-forwarded-for"] ||
         req.socket.remoteAddress ||
