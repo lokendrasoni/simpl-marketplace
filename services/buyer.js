@@ -63,6 +63,8 @@ exports.createOrder = async ({ seller_id, buyer_id, products }) => {
         order = await new Order({ seller: seller_id, buyer: buyer_id, products: products }).save();
     }
 
+    order = order.toObject();
+
     order.id = order._id;
     delete order["_id"]; delete order["__v"];
 
