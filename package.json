@@ -1,0 +1,11 @@
+{
+  "name": "simpl-marketplace",
+  "version": "1.0.0",
+  "description": "A simple marketplace",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app"
+  },
+  "author": "Lokendra Soni",
+  "license": "MIT"
+}
