@@ -26,7 +26,7 @@ exports.getCatalog = async (seller_id) => {
     let catalog = await Catalog.aggregate([
         {
             $match: {
-                user: mongoose.Types.ObjectId(seller_id)
+                user: new mongoose.Types.ObjectId(seller_id)
             }
         },
         {
@@ -40,11 +40,7 @@ exports.getCatalog = async (seller_id) => {
         {
             $project: {
                 id: "$_id",
-                product: {
-                    id: "$product._id",
-                    name: "$product.name",
-                    price: "$product.price"
-                }
+                products: 1
             }
         }
     ]);
@@ -53,17 +49,17 @@ exports.getCatalog = async (seller_id) => {
 };
 
 exports.createOrder = async ({ seller_id, buyer_id, products }) => {
-    let order = await Order.findOne({ seller: seller_id, buyer: buyer_id });
+    let order = await Order.findOne({ seller: seller_id, buyer: buyer_id }).lean();
 
     if (order) {
-        order.products = [...order.products, ...products];
-        await order.save();
+        order.products = [...order.products].map(product => product._id.toString());
+        order.products = [...new Set([...order.products, ...products])];
+        await Order.updateOne({ _id: order._id }, { products: order.products });
     }
     else {
         order = await new Order({ seller: seller_id, buyer: buyer_id, products: products }).save();
+        order = order.toObject();
     }
-
-    order = order.toObject();
 
     order.id = order._id;
     delete order["_id"]; delete order["__v"];

@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 const Catalog = require("../models/catalogs");
 const Product = require("../models/products");
 const Order = require("../models/orders");
+const generatePagination = require("../utilities/generate-pagination");
 
-exports.createOrder = async ({ seller_id, name, products }) => {
+exports.createCatalog = async ({ seller_id, name, products }) => {
     let catalog = await Catalog.findOne({ user: seller_id });
 
     if (!catalog) {
@@ -28,13 +29,15 @@ exports.createOrder = async ({ seller_id, name, products }) => {
 };
 
 exports.getOrders = async (id, page, limit) => {
-    const page = page >= 1 ? page : 1;
-    const limit = limit || 50;
+    page = page >= 1 ? parseInt(page) : 1;
+    limit = parseInt(limit) || 50;
     const skip = limit * (page - 1);
 
     const orders = await Order.aggregate([
         {
-            seller: mongoose.Types.ObjectId(id)
+            $match: {
+                seller: new mongoose.Types.ObjectId(id)
+            }
         },
         {
             $facet: {
@@ -76,9 +79,9 @@ exports.getOrders = async (id, page, limit) => {
                             _id: 0,
                             buyer: {
                                 username: 1,
-                                id: "$buyer._id",
-                                _id: 0
-                            }
+                                id: "$buyer._id"
+                            },
+                            products: 1
                         }
                     }
                 ],
@@ -94,7 +97,7 @@ exports.getOrders = async (id, page, limit) => {
                 total: {
                     $ifNull: [
                         {
-                            $arrayElemAt: ['$total.count', 0]
+                            $arrayElemAt: ['$total.total', 0]
                         },
                         0
                     ]

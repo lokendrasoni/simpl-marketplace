@@ -18,7 +18,7 @@ exports.catalog = catchAsync(async (req, res) => {
 
 exports.order = catchAsync(async (req, res) => {
     const { seller_id } = req.params;
-    const { products } = req.products;
+    const { products } = req.body;
 
     const data = await buyerService.createOrder({ seller_id, buyer_id: req.auth.user.id, products });
 
