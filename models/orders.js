@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 
 const schema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true
+    buyer: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User"
     },
-    user: {
+    seller: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User"

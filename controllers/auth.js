@@ -30,11 +30,11 @@ exports.register = catchAsync(async (req, res) => {
 
     const session = await sessionService.create(user.id, ip, user_agent);
 
-    return sendResponse(res, session._id);
+    return sendResponse(res, session.id);
 });
 
 exports.changePassword = catchAsync(async (req, res) => {
-    await authService.updatePassword(req.body.user_id, req.body);
+    await authService.updatePassword(req.auth.user.id, req.body);
 
     res.json({
         success: true,

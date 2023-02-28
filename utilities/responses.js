@@ -9,7 +9,6 @@ exports.throwError = (message, type, errno) => {
 exports.sendResponse = (res, data, additional_data = {}) => {
     return res.status(200).json({
         success: true,
-        errno: 200,
         data: data,
         ...additional_data
     });
